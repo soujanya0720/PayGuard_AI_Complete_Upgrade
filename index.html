@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101828">
+  <title>PayGuard AI — Payment Scam Awareness</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="PayGuard AI home">
+      <span class="brand-mark">P</span><span>PayGuard <b>AI</b></span>
+    </a>
+    <nav class="account-nav"><span>Hi, {{ logged_in_user.name }}</span><a href="{{ url_for('export_csv') }}">Export CSV</a>{% if logged_in_user.role == 'admin' %}<a href="{{ url_for('admin_dashboard') }}">Admin dashboard</a>{% endif %}<form method="post" action="{{ url_for('logout') }}"><button type="submit" class="nav-button">Log out</button></form></nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="spark">✦</span> SMARTER DIGITAL SAFETY</div>
+        <h1>Pause before you pay.<br><span>Check before you trust.</span></h1>
+        <p class="hero-text">Review suspicious payment messages for common scam warning signs and get clear next steps to help protect yourself.</p>
+        <div class="trust-row">
+          <span>✓ Easy to understand</span><span>✓ Privacy-minded</span><span>✓ Instant demo analysis</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="shield"><span>✓</span></div>
+        <div class="float-card card-top"><span class="mini-icon">⌁</span><div><b>Risk signals</b><small>Message screening</small></div></div>
+        <div class="float-card card-bottom"><span class="mini-check">✓</span><div><b>Stay alert</b><small>Verify independently</small></div></div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="section-heading">
+        <div><div class="eyebrow dark">MESSAGE CHECKER</div><h2>Analyze a suspicious message</h2></div>
+        <span class="step-badge">01 <i>/</i> 02</span>
+      </div>
+      <p class="subheading">Paste the text of an SMS, email, or payment request. Remove personal information before submitting. The ML score is experimental and is not a guarantee.</p>
+
+      <div class="checker-grid">
+        <div class="input-panel">
+          <label for="message">Message content</label>
+          <textarea id="message" maxlength="5000" placeholder="Example: Your account will be blocked today. Share your OTP immediately to verify your account..." spellcheck="false"></textarea>
+          <div class="input-meta"><span id="char-count">0 / 5,000 characters</span><span>Text only · No file upload</span></div>
+          <div class="example-row"><span>Try an example:</span>
+            <button type="button" class="example" data-example="Your account will be blocked today. Share your OTP immediately to verify your account.">Urgent OTP request</button>
+            <button type="button" class="example" data-example="Hi, your appointment is confirmed for 3 PM tomorrow. Please arrive 10 minutes early.">Ordinary message</button>
+          </div>
+          <button id="analyze-btn" class="primary-btn"><span>Analyze message</span><span class="arrow">→</span></button>
+          <p class="privacy-note"><span>♧</span> Privacy note: analyses are saved in a local SQLite database on this computer. Do not submit OTPs, passwords, or financial account details.</p>
+          <p id="error-message" class="error" role="alert"></p>
+        </div>
+
+        <aside class="side-panel">
+          <div class="side-icon">◎</div>
+          <h3>What we look for</h3>
+          <ul>
+            <li><span>01</span> Urgency and threats</li>
+            <li><span>02</span> Requests for OTPs or passwords</li>
+            <li><span>03</span> Unexpected payment demands</li>
+            <li><span>04</span> Prize and refund claims</li>
+            <li><span>05</span> Links needing extra checks</li>
+          </ul>
+          <div class="side-callout"><b>Remember</b><p>A risk score is a clue, not a guarantee. Verify important requests through official channels.</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="results" class="results hidden" aria-live="polite">
+      <div class="result-header"><div><div class="eyebrow dark">ANALYSIS REPORT</div><h2>Your message review</h2></div><button id="reset-btn" class="text-btn">Clear results ↗</button></div>
+      <div class="result-grid">
+        <div class="score-card">
+          <div class="score-label">HYBRID DEMO RISK INDICATOR</div>
+          <div class="score-ring" id="score-ring"><div><strong id="score">0</strong><small>/100</small></div></div>
+          <span id="risk-pill" class="risk-pill">LOW</span>
+          <h3 id="risk-title">Review complete</h3>
+          <p id="risk-summary"></p>
+        </div>
+        <div class="signals-card">
+          <h3>Warning signs detected</h3>
+          <p class="muted">These are the specific patterns that influenced the result.</p>
+          <div id="signals-list"></div>
+        </div>
+      </div>
+      <div class="tips-card"><div class="tips-title"><span class="tip-icon">✦</span><div><h3>Safer next steps</h3><p>Use these checks before taking action.</p></div></div><ul id="tips-list"></ul></div>
+      <p id="disclaimer" class="disclaimer"></p><p id="model-note" class="disclaimer"></p>
+    </section>
+
+
+    <section id="history-section" class="history-section">
+      <div class="result-header">
+        <div><div class="eyebrow dark">LOCAL DATABASE</div><h2>Recent analysis history</h2></div>
+        <button id="clear-history-btn" class="text-btn" type="button">Clear history</button>
+      </div>
+      <p class="subheading">Your latest 50 analysis results are stored in SQLite. Message text is not shown in this list.</p>
+      <div id="history-status" class="muted" role="status">Loading history…</div>
+      <div id="history-list" class="history-list"></div>
+    </section>
+
+    <section class="how-section">
+      <div class="eyebrow dark">BUILT FOR A SAFER DIGITAL WORLD</div><h2>Simple checks. Better decisions.</h2>
+      <div class="feature-grid">
+        <article class="feature"><div class="feature-icon purple">⌕</div><h3>Screen</h3><p>Review text for common pressure tactics and suspicious requests.</p></article>
+        <article class="feature"><div class="feature-icon mint">◇</div><h3>Understand</h3><p>See plain-language explanations instead of a score with no context.</p></article>
+        <article class="feature"><div class="feature-icon amber">↗</div><h3>Act safely</h3><p>Get practical reminders to verify before paying or sharing details.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><a class="brand footer-brand" href="/"><span class="brand-mark">P</span><span>PayGuard <b>AI</b></span></a><p>Student prototype · Financial safety awareness</p><p class="footer-disclaimer">Not affiliated with or endorsed by PayPal. This demo does not make payment decisions or guarantee fraud detection.</p></footer>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

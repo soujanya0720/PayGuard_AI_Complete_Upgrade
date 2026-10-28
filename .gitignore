@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.DS_Store
+
+# Local database may contain submitted message text
+payguard.db

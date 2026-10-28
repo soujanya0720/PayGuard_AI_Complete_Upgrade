@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ 'Create account' if mode == 'register' else 'Sign in' }} · PayGuard AI</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body class="auth-page"><header class="topbar"><a class="brand" href="{{ url_for('login') }}"><span class="brand-mark">P</span><span>PayGuard <b>AI</b></span></a><span class="top-tag">Payment safety workspace</span></header>
+<main class="auth-wrap"><section class="auth-card"><div class="eyebrow dark">PAYGUARD AI ACCOUNT</div><h1>{{ 'Create your account' if mode == 'register' else 'Welcome back' }}</h1><p class="auth-intro">{{ 'Create an account to analyze suspicious messages and keep your own history.' if mode == 'register' else 'Sign in to access your personal fraud-awareness workspace.' }}</p>
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+<form method="post" class="auth-form" autocomplete="on">
+{% if mode == 'register' %}<label for="name">Full name</label><input id="name" name="name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Your name">{% endif %}
+<label for="email">Email address</label><input id="email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com">
+<label for="password">Password</label><input id="password" name="password" type="password" required minlength="8" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" placeholder="At least 8 characters">
+{% if mode == 'register' %}<label for="confirm_password">Confirm password</label><input id="confirm_password" name="confirm_password" type="password" required minlength="8" autocomplete="new-password" placeholder="Re-enter password">{% endif %}
+<button class="primary-btn" type="submit"><span>{{ 'Create account' if mode == 'register' else 'Sign in' }}</span><span class="arrow">→</span></button></form>
+<p class="auth-switch">{% if mode == 'register' %}Already registered? <a href="{{ url_for('login') }}">Sign in</a>{% else %}New to PayGuard AI? <a href="{{ url_for('register') }}">Create an account</a>{% endif %}</p>
+{% if mode == 'login' %}<p class="auth-note">Admin demo account: <code>admin@payguard.local</code><br>Password: <code>Admin@12345</code><br>Change these defaults before sharing or deploying the project.</p>{% endif %}</section></main></body></html>
